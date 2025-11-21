@@ -18,6 +18,10 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         /* Starry Night Sky Background */
@@ -514,13 +518,11 @@
         </g>
     </svg>
     <h1 class="text typewriter">Merry Christmas</h1>
-    <p class="christmas-wish">Nếu em chưa có ai bên cạnh thì hãy để anh ngỏ lời và chúng mình cùng đi cùng nhau qua mùa
-        noel này nhé!</p>
+    <p class="christmas-wish">Giáng sinh này, anh muốn là người sưởi ấm trái tim em và cùng em đón mọi mùa đông về sau</p>
     <script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/MorphSVGPlugin3.min.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/DrawSVGPlugin3.min.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/MotionPathPlugin.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/Physics2DPlugin3.min.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/EasePack3.min.js"></script>
     <script>
         MorphSVGPlugin.convertToPath('polygon');
@@ -536,7 +538,7 @@
         function createParticles() { var i = numParticles, p, particleTl, step = numParticles / treePath.length, pos; while (--i > -1) { p = select(particleTypeArray[i % particleTypeArray.length]).cloneNode(true); mainSVG.appendChild(p); p.setAttribute('fill', particleColorArray[i % particleColorArray.length]); p.setAttribute('class', "particle"); particlePool.push(p); gsap.set(p, { x: -100, y: -100, transformOrigin: '50% 50%' }) } }
         var getScale = gsap.utils.random(0.5, 3, 0.001, true);
 
-        function playParticle(p) { if (!showParticle) { return }; var p = particlePool[particleCount]; gsap.set(p, { x: gsap.getProperty('.pContainer', 'x'), y: gsap.getProperty('.pContainer', 'y'), scale: getScale() }); var tl = gsap.timeline(); tl.to(p, { duration: gsap.utils.random(0.61, 6), physics2D: { velocity: gsap.utils.random(-23, 23), angle: gsap.utils.random(-180, 180), gravity: gsap.utils.random(-6, 50) }, scale: 0, rotation: gsap.utils.random(-123, 360), ease: 'power1', onStart: flicker, onStartParams: [p], onRepeat: (p) => { gsap.set(p, { scale: getScale() }) }, onRepeatParams: [p] }); particleCount++; particleCount = (particleCount >= numParticles) ? 0 : particleCount }
+        function playParticle(p) { if (!showParticle) { return }; var p = particlePool[particleCount]; gsap.set(p, { x: gsap.getProperty('.pContainer', 'x'), y: gsap.getProperty('.pContainer', 'y'), scale: getScale() }); var tl = gsap.timeline(); var angle = gsap.utils.random(-180, 180) * Math.PI / 180; var velocity = gsap.utils.random(50, 150); tl.to(p, { duration: gsap.utils.random(0.61, 6), x: '+=' + Math.cos(angle) * velocity, y: '+=' + Math.sin(angle) * velocity, scale: 0, rotation: gsap.utils.random(-123, 360), ease: 'power1.out', onStart: flicker, onStartParams: [p], onRepeat: (p) => { gsap.set(p, { scale: getScale() }) }, onRepeatParams: [p] }); particleCount++; particleCount = (particleCount >= numParticles) ? 0 : particleCount }
 
         function drawStar() { starTl = gsap.timeline({ onUpdate: playParticle }); starTl.to('.pContainer, .sparkle', { duration: 6, motionPath: { path: '.treePath', autoRotate: false }, ease: 'linear' }).to('.pContainer, .sparkle', { duration: 1, onStart: function () { showParticle = false }, x: treeBottomPath[0].x, y: treeBottomPath[0].y }).to('.pContainer, .sparkle', { duration: 2, onStart: function () { showParticle = true }, motionPath: { path: '.treeBottomPath', autoRotate: false }, ease: 'linear' }, '-=0').from('.treeBottomMask', { duration: 2, drawSVG: '0% 0%', stroke: '#FFF', ease: 'linear' }, '-=2') }
 
